@@ -60,6 +60,11 @@ processes, each running in its own container.
 
 `kubectl get services`: List all services in the namespace.
 
+`kubectl logs <pod name>`: Get logs from the pod
+
+`kubectl create -f <filename>`: Create the resource using the filename.
+
+`kubectl port-forward <pod name> 8888:8080` : You can connect to the port in your local machine by forwarding the port. 
 
 ## How to create a Kubernetes cluster with an image
 
@@ -108,6 +113,52 @@ pod can have one container or it can have multiple containers.
 b) Replication Controller: Next up you need to understand that the Replication controller is responsible for creating the pod object and maintaining the replicas. So for some reason if one of the pods goes down. The replication controller will make sure the replicas are maintained.
 
 c) Services : In kubernetes, the pods are ephemeral. When a pod is created it gets assigned a new IP. So if one of the pods goes down the IP will change. However the service has a static ip for its entire lifecycle. And the client connects to this static IP service. The service then makes sure that it assigns the incoming HTTP request to one of the relevant pods.
+
+
+# Pods
+
+a) Containers in the same pod run on the same network namespace.
+
+b)  All the containers in a pod also have the same
+loopback network interface, so a container can communicate with other containers in the same pod through localhost.
+
+c) All pods in a Kubernetes cluster reside in a single flat, shared, network-address space , which means every pod can access every other pod at the other
+pod’s IP address. No NAT (Network Address Translation) gateways exist between them.
+When two pods send network packets between each other, they’ll each see the actual
+IP address of the other as the source IP in the packet.
+
+
+Let us now see how to create a pod
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kubia-manual
+spec:
+  containers:
+  - image: luksa/kubia
+    name: kubia 
+    ports:
+    - containerPort: 8080
+      protocol: TCP
+```
+This is the most basic description of creating a pod using a manifest file. We need to specify the API version and the kind of resource you want to create. Furthermore you need to mention the container information inside the spec section. The rest is pretty self explanatory. 
+
+## Labels
+
+Labels are an important feature of kubernetes and allow one to specify labels to a particular pod.This will allow you to filter these pods according to a particular label for example in the manifest we just saw above, if we want to attach a particular label to it we can do so by adding the following section. You can view the kubia-manual-with-labels to learn more about this. 
+
+```
+labels:
+    creation_method: manual 
+    env: prod
+```
+
+We can then easily filter the pods using some simple commands like
+
+`kubectl get pods -l env` or `kubectl get pods -l creation-method=manual`
+
 
 # Resources
 
