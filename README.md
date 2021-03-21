@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <p align="center">
   <img src="images/kubernetes-logo.png" />
 </p>
@@ -8,9 +7,8 @@ This repository contains the notes I am preparing for quick revision. I will be 
 
 # Kubernetes Notes
 
-<p align="center">
-  <img src="images/nodes-cluster-1.png" />
-</p>
+
+![](https://i.imgur.com/kUOQdoH.png)
 
 
 ## Kubernetes Architecture 
@@ -95,16 +93,14 @@ We can then check the services using the above command.
 
 ## Deep dive into what just happened
 
-The basic building block in Kubernetes is the pod. But, you didn’t really cre-
-ate any pods either, at least not directly. By running the `kubectl run` command you
+The basic building block in Kubernetes is the pod. But, you didn’t really create any pods either, at least not directly. By running the `kubectl run` command you
 created a `ReplicationController`, and this ReplicationController is what created the
 actual Pod object. To make that pod accessible from outside the cluster, you told
 Kubernetes to expose all the pods managed by that ReplicationController as a single
 Service. A rough picture of all three elements is presented in figure below.
 
-<p align="center">
-  <img src="images/internal-diagram.png" />
-</p>
+![](https://i.imgur.com/BqRZ7DZ.png)
+
 
 **Things you need to remember**: 
 
@@ -168,31 +164,3 @@ We can then easily filter the pods using some simple commands like
 * [You need to Learn Kubernetes](https://www.youtube.com/watch?v=7bA0gTroJjw&ab_channel=NetworkChuck)
 
 Image Credits: https://stackify.com/kubernetes-guide-container-orchestration/
-=======
-<p align="center">
-  <img src="images/kubernetes-logo.png" width="400" height="200" />
-</p>
-
-
-This repository contains the notes I am preparing for quick revision. I will be taking a few courses over the course of time and will be updating this repository with all of the information I learn.I will include the resources or articles I find useful while compiling this list.
-
-# Kubernetes Notes
-
-
-## Kubernetes Architecture 
-
-At the hardware level, a Kubernetes cluster
-is composed of many nodes, which can be split into two types:
- * The master node, which hosts the Kubernetes Control Plane that controls and manages the whole Kubernetes system
-
-*  Worker nodes that run the actual applications you deploy
-
-
-# Resources
-
-* [Kubernetes in Action](https://github.com/indrabasak/Books/blob/master/Kubernetes%20in%20Action.pdf)
-
-* [You need to Learn Kubernetes](https://www.youtube.com/watch?v=7bA0gTroJjw&ab_channel=NetworkChuck)
-
-Image Credits: https://stackify.com/kubernetes-guide-container-orchestration/
->>>>>>> 0e2d741b5f7ebf03195f51833fb6dd4bd396cb3f
