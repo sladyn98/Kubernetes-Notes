@@ -124,6 +124,8 @@ pod’s IP address. No NAT (Network Address Translation) gateways exist between 
 When two pods send network packets between each other, they’ll each see the actual
 IP address of the other as the source IP in the packet.
 
+`Pod spec mainly contains AKMS (API, kind, metadata, spec). With AKMS your pod gets the definition to spin up freshly in the cluster.In pod manifest file, under pod spec, you need to define the container spec. This spec carries information like container image name and image version to be fetched from Docker hub or custom repository. In container spec you need to define port which container is going to use.This can be defined by containerPort directive in the container spec of pod manifest “containerPort” defines the port on which app can be reached out inside the container`
+
 
 Let us now see how to create a pod
 
@@ -142,6 +144,22 @@ spec:
 ```
 This is the most basic description of creating a pod using a manifest file. We need to specify the API version and the kind of resource you want to create. Furthermore you need to mention the container information inside the spec section. The rest is pretty self explanatory. 
 
+# Service
+
+For a pod to be exposed to the outside world it needs a service.
+A service is a k8s object and basically a firewall rule. This rule is created basically for two reasons.
+a) To expose PODs to the external world.
+b) You can load balance between a set of pods and get rid of pod ip change if it dies.
+
+
+To expose a pod to external world you need to create a service with nodePort type. nodePort sends external traffic to the Kubernetes cluster which is received on “port” defined in service object YAML.
+
+When you wish to access a pod as via a service, you are going to hit `host-ip:nodePort` in order to reach till k8s pod or deployment object.
+Once service receives traffic from an external source it does two things.
+1) First, it sends the traffic received on nodePort and forwards that to port service is listening to i.e to the port defined in “Port” directive of service object YAML.
+2) The second thing what a service does. It redirects the traffic received on “Port” to “targetPort” which is the directive used to define port on which container has exposed the application.
+
+
 ## Labels
 
 Labels are an important feature of kubernetes and allow one to specify labels to a particular pod.This will allow you to filter these pods according to a particular label for example in the manifest we just saw above, if we want to attach a particular label to it we can do so by adding the following section. You can view the kubia-manual-with-labels to learn more about this. 
@@ -156,6 +174,19 @@ We can then easily filter the pods using some simple commands like
 
 `kubectl get pods -l env` or `kubectl get pods -l creation-method=manual`
 
+# Container Patterns
+
+## Init container
+
+In Kubernetes, an init container is the one that starts and executes before other containers in the same Pod. It’s meant to perform initialization logic for the main application hosted on the Pod. For example, create the necessary user accounts, perform database migrations, create database schemas and so on.
+
+1) Container starts before any other container in the pod
+2) The logic in the init container should not take too long to execute
+3) The init container shares network with the existing containers, so we can use that to share stuff inside a DB
+
+Some of the usecases of using init containers are:
+a) Seeding a database
+b) Needing to wait before a database is initialized.
 
 # Resources
 
