@@ -142,7 +142,60 @@ spec:
     - containerPort: 8080
       protocol: TCP
 ```
-This is the most basic description of creating a pod using a manifest file. We need to specify the API version and the kind of resource you want to create. Furthermore you need to mention the container information inside the spec section. The rest is pretty self explanatory. 
+This is the most basic description of creating a pod using a manifest file. We need to specify the API version and the kind of resource you want to create. Furthermore you need to mention the container information inside the spec section. The rest is pretty self explanatory.
+
+# Persistent Volumes
+
+Kubernetes makes physical storage devices like your SSDs, NVMe disks, NAS, NFS servers available to your cluster in the form of objects called -- Persistent Volumes.
+
+Each of these Persistent Volumes is consumed by a Kubernetes Pod (or Pods) by issuing a PersistentVolumeClaim object -- a PVC. A PVC object lets pods use storage from Persistent Volumes.
+
+```
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+      name:pv01
+spec:
+   capacity: # defines the capacity of PV we are creating
+       storage: 10Gi #the amount of storage we are tying to claim
+   accessModes: # defines the rights of the volume we are creating
+      - ReadWriteOnce
+      hostPath:
+         path: "/tmp/data01" # path to which we are creating the volume
+```
+
+<p align="center">
+  <img src="images/storage.png" />
+</p>
+
+Access Modes:
+To access the persistent volume we had four different access modes. They are.
+1. ReadWriteOnce(RWO)
+2. ReadOnlyMany(ROX)
+3. ReadWriteMany(RWX)
+4. ReadWriteOncePod(RWOP)
+
+
+
+# Persistent volume claim
+
+PersistentVolumeClaim
+In a real ecosystem, a system admin will create the PersistentVolume then a developer will create a PersistentVolumeClaim which will be referenced in a pod. A PersistentVolumeClaim is created by specifying the minimum size and the access mode they require from the persistentVolume.
+
+```
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+      name:pv
+spec:
+   accessModes: 
+      - ReadWriteOnce
+  resources:
+    requests:
+      storage: 256m
+  storageClassName: shared
+```
+
 
 # Service
 
@@ -159,6 +212,10 @@ Once service receives traffic from an external source it does two things.
 1) First, it sends the traffic received on nodePort and forwards that to port service is listening to i.e to the port defined in “Port” directive of service object YAML.
 2) The second thing what a service does. It redirects the traffic received on “Port” to “targetPort” which is the directive used to define port on which container has exposed the application.
 
+# Replication Controllers, Replica Sets, and Deployments
+
+
+Replica sets are the same this as replication controller but provide more options for selection. Having a wider range of selector options is good but what's even better is having more flexibility in terms of rolling out and rolling back updates. This is where another Kubernetes API called a Deployment comes in.
 
 ## Labels
 
@@ -187,6 +244,26 @@ In Kubernetes, an init container is the one that starts and executes before othe
 Some of the usecases of using init containers are:
 a) Seeding a database
 b) Needing to wait before a database is initialized.
+
+# Sidecar pattern
+
+Containers do one job and they do it well. Hence we let the main container insdie a pod do its job and let other containers take care of the reamining jobs like shipping logs. Both containers have access to the same namespace and therefore can easily perform any tasks that the main container does. 
+
+While creating sidecar containers one needs to remember certain things
+
+a) Making sure that the sidecar container does not consume too many resources
+b) Separating of concerns are respected.
+c) Common examples of sidecar containers are log shippers, log watchers, monitoring agents among others.
+
+# Adapter pattern
+
+
+# Commands
+
+kubectl get <resource type> <resource name>
+kubectl delete <resource type> <resource name> ---> Used to delete a pod
+
+
 
 # Resources
 
